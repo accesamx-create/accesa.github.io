@@ -4,11 +4,8 @@ const HOJAS = [
     "FAAC",
     "Centurion",
     "Erreka",
-    "ROSSI"
+    "Rossi"
 ];
-
-const TIPO_CAMBIO = 18;
-const MARGEN = 1.22;
 
 let data = {};
 let currentSheet = HOJAS[0];
@@ -19,6 +16,8 @@ const search = document.getElementById('search');
 
 async function cargarDatos() {
 
+    products.innerHTML = "<p>Cargando productos...</p>";
+
     for (const hoja of HOJAS) {
 
         try {
@@ -27,11 +26,14 @@ async function cargarDatos() {
                 `${API_BASE}?sheet=${encodeURIComponent(hoja)}`
             );
 
-            data[hoja] = await response.json();
+            const json = await response.json();
+
+            data[hoja] = json;
 
         } catch (error) {
 
-            console.error(`Error cargando ${hoja}`, error);
+            console.error(`Error cargando ${hoja}:`, error);
+
             data[hoja] = [];
 
         }
@@ -80,12 +82,20 @@ function renderProducts() {
         .filter(producto => {
 
             const descripcion =
-                producto["Descripción"] ||
-                producto["DESCRIPCIÓN"] ||
-                producto["Descripcion"] ||
-                producto["DESCRIPCION"];
+                producto.Descripcion ||
+                producto.DESCRIPCION ||
+                producto.Descripción ||
+                producto.DESCRIPCIÓN ||
+                "";
 
             if (!descripcion) return false;
+
+            if (
+                descripcion.toLowerCase() === "null" ||
+                descripcion.trim() === ""
+            ) {
+                return false;
+            }
 
             return descripcion
                 .toLowerCase()
@@ -96,51 +106,28 @@ function renderProducts() {
         .forEach(producto => {
 
             const descripcion =
-                producto["Descripción"] ||
-                producto["DESCRIPCIÓN"] ||
-                producto["Descripcion"] ||
-                producto["DESCRIPCION"];
+                producto.Descripcion ||
+                producto.DESCRIPCION ||
+                producto.Descripción ||
+                producto.DESCRIPCIÓN ||
+                "";
 
-            let inventario;
-            let precioUSD;
+            const inventario =
+                producto.Inventario ||
+                producto.INVENTARIO ||
+                0;
 
-            if (currentSheet === "FAAC Piezas Únicas") {
+            const precioRaw =
+                producto.Precio ||
+                producto.PRECIO ||
+                0;
 
-                inventario =
-                    producto["Existencia"] ||
-                    producto["EXISTENCIA"] ||
-                    0;
-
-                precioUSD =
-                    producto["Precios"] ||
-                    producto["PRECIOS"] ||
-                    0;
-
-            } else {
-
-                inventario =
-                    producto["Inventario"] ||
-                    producto["INVENTARIO"] ||
-                    0;
-
-                precioUSD =
-                    producto["Precio"] ||
-                    producto["PRECIO"] ||
-                    0;
-
-            }
-
-            precioUSD =
+            const precio = Math.round(
                 Number(
-                    String(precioUSD)
-                        .replace("$", "")
-                        .replace(",", "")
-                ) || 0;
-
-            const precioMXN = Math.round(
-                precioUSD *
-                MARGEN *
-                TIPO_CAMBIO
+                    String(precioRaw)
+                        .replace(/\$/g, '')
+                        .replace(/,/g, '')
+                ) || 0
             );
 
             const card = document.createElement('div');
@@ -151,19 +138,29 @@ function renderProducts() {
                 <h3>${descripcion}</h3>
 
                 <p>
-                    <b>Inventario:</b>
+                    <strong>Inventario:</strong>
                     ${inventario}
                 </p>
 
                 <p>
-                    <b>Precio:</b>
-                    $${precioMXN.toLocaleString('es-MX')}
+                    <strong>Precio:</strong>
+                    $${precio.toLocaleString('es-MX')}
                 </p>
             `;
 
             products.appendChild(card);
 
         });
+
+    if (products.innerHTML === '') {
+
+        products.innerHTML = `
+            <div class="card">
+                <h3>No se encontraron productos</h3>
+            </div>
+        `;
+
+    }
 }
 
 search.addEventListener('input', renderProducts);
