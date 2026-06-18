@@ -1,71 +1,171 @@
-let data = {};
-let currentSheet = '';
+const API_BASE = "https://sheetdb.io/api/v1/99hgxwlphqjm8";
 
-fetch('productos.json')
-.then(r => r.json())
-.then(json => {
-    data = json;
-    currentSheet = Object.keys(data)[0];
-    renderTabs();
-    renderProducts();
-});
+const HOJAS = [
+    "FAAC",
+    "Centurion",
+    "Erreka",
+    "ROSSI"
+];
+
+const TIPO_CAMBIO = 18;
+const MARGEN = 1.22;
+
+let data = {};
+let currentSheet = HOJAS[0];
 
 const tabs = document.getElementById('tabs');
 const products = document.getElementById('products');
 const search = document.getElementById('search');
 
+async function cargarDatos() {
+
+    for (const hoja of HOJAS) {
+
+        try {
+
+            const response = await fetch(
+                `${API_BASE}?sheet=${encodeURIComponent(hoja)}`
+            );
+
+            data[hoja] = await response.json();
+
+        } catch (error) {
+
+            console.error(`Error cargando ${hoja}`, error);
+            data[hoja] = [];
+
+        }
+    }
+
+    renderTabs();
+    renderProducts();
+}
+
 function renderTabs() {
+
     tabs.innerHTML = '';
 
-    Object.keys(data).forEach(sheet => {
-        const b = document.createElement('div');
+    HOJAS.forEach(sheet => {
 
-        b.className = 'tab' + (sheet === currentSheet ? ' active' : '');
-        b.textContent = sheet;
+        const btn = document.createElement('div');
 
-        b.onclick = () => {
+        btn.className =
+            'tab' +
+            (sheet === currentSheet ? ' active' : '');
+
+        btn.textContent = sheet;
+
+        btn.onclick = () => {
+
             currentSheet = sheet;
+
             renderTabs();
             renderProducts();
+
         };
 
-        tabs.appendChild(b);
+        tabs.appendChild(btn);
+
     });
 }
 
 function renderProducts() {
+
     const term = search.value.toLowerCase();
 
     products.innerHTML = '';
 
     (data[currentSheet] || [])
-        .filter(p => {
 
-            // Ignorar registros vacíos o null
-            if (!p.descripcion) return false;
-            if (String(p.descripcion).toLowerCase() === 'null') return false;
-            if (p.precio == null) return false;
+        .filter(producto => {
 
-            return p.descripcion.toLowerCase().includes(term);
+            const descripcion =
+                producto["Descripción"] ||
+                producto["DESCRIPCIÓN"] ||
+                producto["Descripcion"] ||
+                producto["DESCRIPCION"];
+
+            if (!descripcion) return false;
+
+            return descripcion
+                .toLowerCase()
+                .includes(term);
+
         })
-        .forEach(p => {
 
-            const precioBase = Number(p.precio) || 0;
+        .forEach(producto => {
 
-            // USD × 1.22 × 18
-            const precioFinal = Math.round(precioBase * 1.22 * 17.20);
+            const descripcion =
+                producto["Descripción"] ||
+                producto["DESCRIPCIÓN"] ||
+                producto["Descripcion"] ||
+                producto["DESCRIPCION"];
+
+            let inventario;
+            let precioUSD;
+
+            if (currentSheet === "FAAC Piezas Únicas") {
+
+                inventario =
+                    producto["Existencia"] ||
+                    producto["EXISTENCIA"] ||
+                    0;
+
+                precioUSD =
+                    producto["Precios"] ||
+                    producto["PRECIOS"] ||
+                    0;
+
+            } else {
+
+                inventario =
+                    producto["Inventario"] ||
+                    producto["INVENTARIO"] ||
+                    0;
+
+                precioUSD =
+                    producto["Precio"] ||
+                    producto["PRECIO"] ||
+                    0;
+
+            }
+
+            precioUSD =
+                Number(
+                    String(precioUSD)
+                        .replace("$", "")
+                        .replace(",", "")
+                ) || 0;
+
+            const precioMXN = Math.round(
+                precioUSD *
+                MARGEN *
+                TIPO_CAMBIO
+            );
 
             const card = document.createElement('div');
+
             card.className = 'card';
 
             card.innerHTML = `
-                <h3>${p.descripcion}</h3>
-                <p><b>Inventario:</b> ${p.inventario ?? ''}</p>
-                <p><b>Precio:</b> $${precioFinal.toLocaleString('es-MX')}</p>
+                <h3>${descripcion}</h3>
+
+                <p>
+                    <b>Inventario:</b>
+                    ${inventario}
+                </p>
+
+                <p>
+                    <b>Precio:</b>
+                    $${precioMXN.toLocaleString('es-MX')}
+                </p>
             `;
 
             products.appendChild(card);
+
         });
 }
 
 search.addEventListener('input', renderProducts);
+
+cargarDatos();
