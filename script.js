@@ -3,10 +3,14 @@ const API_BASE = "https://sheetdb.io/api/v1/99hgxwlphqjm8";
 const HOJAS = [
     "FAAC",
     "Centurion",
+    "Merik",
     "Erreka",
     "Rossi",
+    "Allmatic",
+    "Azteca",
     "Controles",
     "Resortes",
+    "Electronica",
     "Extras"
 ];
 
