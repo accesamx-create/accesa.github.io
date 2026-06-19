@@ -4,7 +4,10 @@ const HOJAS = [
     "FAAC",
     "Centurion",
     "Erreka",
-    "Rossi"
+    "Rossi",
+    "Controles",
+    "Resortes",
+    "Extras"
 ];
 
 let data = {};
