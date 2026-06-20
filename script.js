@@ -9,6 +9,7 @@ const HOJAS = [
     "Allmatic",
     "Azteca",
     "Controles",
+    "Comunello",
     "Resortes",
     "Electronica",
     "Extras"
