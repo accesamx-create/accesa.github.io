@@ -35,8 +35,6 @@ async function cargarDatos() {
             );
 
             data[hoja] = await response.json();
-            console.log(hoja, json);
-            data[hoja] = json;
 
         } catch (error) {
 
