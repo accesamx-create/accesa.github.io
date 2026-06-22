@@ -2,4 +2,4 @@
 
 Catalogo de inventario de productos FAAC 
 
-Pagina de API: https://sheetdb.io/app/apis
+API usada OpenSheet: https://github.com/benborgers/opensheet#readme
