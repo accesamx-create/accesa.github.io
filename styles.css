@@ -2,7 +2,7 @@
 body{font-family:Arial,sans-serif;background:#030304;margin:0}
 .container{max-width:1200px;margin:auto;padding:20px}
 h1{text-align:center;color:white}
-#search{width:100%;padding:12px;border:1px solid #c9f79e;border-radius:8px;margin-bottom:15px}
+#search{width:100%;padding:12px;border:1px background#c9f79e;color:white;border-radius:8px;margin-bottom:15px}
 #tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
 .tab{padding:10px 15px;background:#68ab2a;color:white;border-radius:8px;cursor:pointer}
 .tab.active{background:#0d6efd;color:white}
