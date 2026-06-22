@@ -43,6 +43,11 @@ async function cargarDatos() {
 
         }
     }
+    const json = await response.json();
+
+    console.log(hoja, json);
+
+    data[hoja] = json;
 
     renderTabs();
     renderProducts();
