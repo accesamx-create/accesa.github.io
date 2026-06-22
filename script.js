@@ -11,7 +11,8 @@ const HOJAS = [
     "Controles",
     "Resortes",
     "Comunello",
-    "Electronica"
+    "Electronica",
+    "Extras"
 ];
 
 let data = {};
