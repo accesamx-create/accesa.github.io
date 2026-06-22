@@ -24,7 +24,7 @@ const search = document.getElementById("search");
 
 async function cargarDatos() {
 
-    products.innerHTML = "<p>Cargando productos...</p>";
+    products.innerHTML = "<p style='color:white;'>Cargando productos...</p>";
 
     for (const hoja of HOJAS) {
 
