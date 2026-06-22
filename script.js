@@ -6,7 +6,7 @@ const HOJAS = [
     "Merik",
     "Erreka",
     "Rossi",
-    "Allmati",
+    "Allmatic",
     "Azteca",
     "Controles",
     "Resortes",
