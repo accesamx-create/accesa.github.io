@@ -1,4 +1,4 @@
-const API_BASE = "https://sheetdb.io/api/v1/99hgxwlphqjm8";
+const SHEET_ID = "1cHvWmYFM-KW4hARsX5P2IuWSzeMGxzTa4fGoSLNIsk4";
 
 const HOJAS = [
     "FAAC",
@@ -17,9 +17,9 @@ const HOJAS = [
 let data = {};
 let currentSheet = HOJAS[0];
 
-const tabs = document.getElementById('tabs');
-const products = document.getElementById('products');
-const search = document.getElementById('search');
+const tabs = document.getElementById("tabs");
+const products = document.getElementById("products");
+const search = document.getElementById("search");
 
 async function cargarDatos() {
 
@@ -30,17 +30,14 @@ async function cargarDatos() {
         try {
 
             const response = await fetch(
-                `${API_BASE}?sheet=${encodeURIComponent(hoja)}`
+                `https://opensheet.elk.sh/${SHEET_ID}/${encodeURIComponent(hoja)}`
             );
 
-            const json = await response.json();
-
-            data[hoja] = json;
+            data[hoja] = await response.json();
 
         } catch (error) {
 
             console.error(`Error cargando ${hoja}:`, error);
-
             data[hoja] = [];
 
         }
@@ -52,15 +49,15 @@ async function cargarDatos() {
 
 function renderTabs() {
 
-    tabs.innerHTML = '';
+    tabs.innerHTML = "";
 
     HOJAS.forEach(sheet => {
 
-        const btn = document.createElement('div');
+        const btn = document.createElement("div");
 
         btn.className =
-            'tab' +
-            (sheet === currentSheet ? ' active' : '');
+            "tab" +
+            (sheet === currentSheet ? " active" : "");
 
         btn.textContent = sheet;
 
@@ -78,31 +75,40 @@ function renderTabs() {
     });
 }
 
+function obtenerValor(obj, posiblesNombres) {
+
+    for (const nombre of posiblesNombres) {
+
+        if (obj[nombre] !== undefined) {
+            return obj[nombre];
+        }
+
+    }
+
+    return null;
+}
+
 function renderProducts() {
 
     const term = search.value.toLowerCase();
 
-    products.innerHTML = '';
+    products.innerHTML = "";
 
     (data[currentSheet] || [])
 
         .filter(producto => {
 
-            const descripcion =
-                producto.Descripcion ||
-                producto.DESCRIPCION ||
-                producto.Descripción ||
-                producto.DESCRIPCIÓN ||
-                "";
+            const descripcion = obtenerValor(
+                producto,
+                [
+                    "Descripcion",
+                    "Descripción",
+                    "DESCRIPCION",
+                    "DESCRIPCIÓN"
+                ]
+            );
 
             if (!descripcion) return false;
-
-            if (
-                descripcion.toLowerCase() === "null" ||
-                descripcion.trim() === ""
-            ) {
-                return false;
-            }
 
             return descripcion
                 .toLowerCase()
@@ -112,34 +118,45 @@ function renderProducts() {
 
         .forEach(producto => {
 
-            const descripcion =
-                producto.Descripcion ||
-                producto.DESCRIPCION ||
-                producto.Descripción ||
-                producto.DESCRIPCIÓN ||
-                "";
+            const descripcion = obtenerValor(
+                producto,
+                [
+                    "Descripcion",
+                    "Descripción",
+                    "DESCRIPCION",
+                    "DESCRIPCIÓN"
+                ]
+            );
 
             const inventario =
-                producto.Inventario ||
-                producto.INVENTARIO ||
-                0;
+                obtenerValor(
+                    producto,
+                    [
+                        "Inventario",
+                        "INVENTARIO"
+                    ]
+                ) || 0;
 
             const precioRaw =
-                producto.Precio ||
-                producto.PRECIO ||
-                0;
+                obtenerValor(
+                    producto,
+                    [
+                        "Precio",
+                        "PRECIO"
+                    ]
+                ) || 0;
 
             const precio = Math.round(
                 Number(
                     String(precioRaw)
-                        .replace(/\$/g, '')
-                        .replace(/,/g, '')
+                        .replace(/\$/g, "")
+                        .replace(/,/g, "")
                 ) || 0
             );
 
-            const card = document.createElement('div');
+            const card = document.createElement("div");
 
-            card.className = 'card';
+            card.className = "card";
 
             card.innerHTML = `
                 <h3>${descripcion}</h3>
@@ -151,7 +168,7 @@ function renderProducts() {
 
                 <p>
                     <strong>Precio:</strong>
-                    $${precio.toLocaleString('es-MX')}
+                    $${precio.toLocaleString("es-MX")}
                 </p>
             `;
 
@@ -159,7 +176,7 @@ function renderProducts() {
 
         });
 
-    if (products.innerHTML === '') {
+    if (products.innerHTML === "") {
 
         products.innerHTML = `
             <div class="card">
@@ -170,6 +187,6 @@ function renderProducts() {
     }
 }
 
-search.addEventListener('input', renderProducts);
+search.addEventListener("input", renderProducts);
 
 cargarDatos();
