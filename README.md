@@ -1,5 +1,5 @@
-# Catalogo Accesa 2026
+# Catalogo ACCESA 2026
 
-Catalogo de inventario de productos FAAC 
+Catalogo de inventario de productos ACCESA
 
 API usada OpenSheet: https://github.com/benborgers/opensheet#readme
