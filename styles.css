@@ -11,6 +11,6 @@ h1{text-align:center;color:white}
 .card h3 {
     color: white;
     text-decoration: underline;
-    text-decoration-color: #00c8ff;
-    text-underline-offset: 4px;
+    text-decoration-color: black;
+    text-underline-offset: 10px;
 }
