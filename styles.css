@@ -1,11 +1,272 @@
 
-body{font-family:Arial,sans-serif;background:#030304;margin:0}
-.container{max-width:1200px;margin:auto;padding:20px}
-h1{text-align:center;color:white}
-#search{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;margin-bottom:15px}
-#tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
-.tab{padding:10px 15px;background:#d2f0b6;color:black;border-radius:8px;cursor:pointer}
-.tab.active{background:#0d6efd;color:white}
-#products{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:15px}
-.card{background:#68ab2a;color:white;padding:15px;border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,.15)}
-.card h3 {text-decoration: underline;text-underline-offset: 5px;text-decoration-thickness: 10px;}
+/* ========================= */
+/* GENERAL */
+/* ========================= */
+
+body{
+    font-family:Arial,sans-serif;
+    background:#030304;
+    margin:0;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+/* ========================= */
+/* HEADER */
+/* ========================= */
+
+.header{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.logo{
+    width:100%;
+    max-width:450px;
+    height:auto;
+    margin-bottom:10px;
+}
+
+h1{
+    color:white;
+    margin:0;
+    font-size:2rem;
+}
+
+.subtitle{
+    color:#bdbdbd;
+    margin-top:8px;
+    margin-bottom:8px;
+    font-size:15px;
+}
+
+.contacto{
+    color:white;
+    font-size:16px;
+    margin-bottom:25px;
+}
+
+.contacto strong{
+    color:#68ab2a;
+}
+
+/* ========================= */
+/* BUSCADOR */
+/* ========================= */
+
+#search{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    margin-bottom:25px;
+    font-size:16px;
+    box-sizing:border-box;
+    outline:none;
+}
+
+#search:focus{
+    box-shadow:0 0 10px rgba(104,171,42,.6);
+}
+
+/* ========================= */
+/* PESTAÑAS */
+/* ========================= */
+
+#tabs{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:12px;
+    margin-bottom:25px;
+}
+
+.tab{
+    padding:12px 22px;
+    background:#d2f0b6;
+    color:black;
+    border-radius:30px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:all .2s ease;
+}
+
+.tab:hover{
+    transform:translateY(-2px);
+}
+
+.tab.active{
+    background:#68ab2a;
+    color:white;
+    box-shadow:0 0 15px rgba(104,171,42,.6);
+}
+
+/* ========================= */
+/* PRODUCTOS */
+/* ========================= */
+
+#products{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(420px,1fr));
+    gap:20px;
+}
+
+/* ========================= */
+/* TARJETAS */
+/* ========================= */
+
+.card{
+    background:#68ab2a;
+    color:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 4px 10px rgba(0,0,0,.25);
+    transition:all .25s ease;
+}
+
+.card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 25px rgba(0,0,0,.35);
+}
+
+/* ========================= */
+/* DESCRIPCIÓN PRODUCTO */
+/* ========================= */
+
+.card h3{
+    margin-top:0;
+    margin-bottom:15px;
+    font-size:1.1rem;
+    line-height:1.4;
+
+    text-decoration:none;
+    border-bottom:2px solid rgba(255,255,255,.85);
+    padding-bottom:8px;
+}
+
+/* ========================= */
+/* TEXTO GENERAL */
+/* ========================= */
+
+.card p{
+    margin:8px 0;
+    font-size:15px;
+}
+
+.card strong{
+    color:#f3f3f3;
+}
+
+/* ========================= */
+/* PRECIO */
+/* ========================= */
+
+.precio{
+    font-size:32px;
+    font-weight:700;
+    margin-top:18px;
+    margin-bottom:0;
+    color:white;
+}
+
+/* ========================= */
+/* INVENTARIO */
+/* ========================= */
+
+.stock{
+    font-weight:bold;
+}
+
+.stock.disponible{
+    color:#d9ffd0;
+}
+
+.stock.agotado{
+    color:#ffbaba;
+}
+
+/* ========================= */
+/* MENSAJE DE CARGA */
+/* ========================= */
+
+.loading{
+    color:white;
+    text-align:center;
+    font-size:20px;
+    font-weight:bold;
+    width:100%;
+    padding:30px 0;
+}
+
+/* ========================= */
+/* SCROLLBAR */
+/* ========================= */
+
+::-webkit-scrollbar{
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:#030304;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#68ab2a;
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#7ec63b;
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
+@media (max-width:768px){
+
+    .container{
+        padding:15px;
+    }
+
+    .logo{
+        max-width:300px;
+    }
+
+    h1{
+        font-size:1.6rem;
+    }
+
+    .subtitle{
+        font-size:14px;
+    }
+
+    .contacto{
+        font-size:14px;
+    }
+
+    #products{
+        grid-template-columns:1fr;
+    }
+
+    .card{
+        padding:18px;
+    }
+
+    .card h3{
+        font-size:1rem;
+    }
+
+    .precio{
+        font-size:28px;
+    }
+
+    .tab{
+        padding:10px 18px;
+        font-size:14px;
+    }
+}
