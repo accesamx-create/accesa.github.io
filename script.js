@@ -89,12 +89,11 @@ function obtenerImagen(descripcion) {
 
     if (!descripcion) return "";
 
-    // normaliza nombre (quita espacios)
     const nombre = descripcion
         .trim()
         .replace(/\s+/g, "");
 
-    return `Imagenes/${nombre}.jpg`;
+    return `./Imagenes/${nombre}.jpg`;
 }
 
 function renderProducts() {
