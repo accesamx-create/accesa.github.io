@@ -186,7 +186,7 @@ h1 {
 
 .card p {
     margin: 6px 0; /* Reduje un poco el margen para compactar */
-    font-size: 15px;
+    font-size: 18px;
 }
 
 .card strong {
@@ -198,9 +198,9 @@ h1 {
 /* ========================= */
 
 .precio {
-    font-size: 28px; /* Ajustado para que quepa perfecto con la imagen al lado */
+    font-size: 34px; /* Ajustado para que quepa perfecto con la imagen al lado */
     font-weight: 700;
-    margin-top: 12px;
+    margin-top: 8px;
     margin-bottom: 0;
     color: white;
 }
