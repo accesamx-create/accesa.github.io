@@ -164,27 +164,6 @@ h1{
 }
 
 /* ========================= */
-/* IMAGEN PRODUCTO */
-/* ========================= */
-
-.product-image{
-    width:160px;
-    height:110px;
-
-    object-fit:contain;
-
-    background:white;
-
-    border-radius:20px;
-
-    padding:10px;
-
-    box-sizing:border-box;
-
-    flex-shrink:0;
-}
-
-/* ========================= */
 /* TEXTO GENERAL */
 /* ========================= */
 
@@ -308,11 +287,6 @@ h1{
     .card-content{
         flex-direction:column-reverse;
         text-align:center;
-    }
-    .product-image{
-        width:100%;
-        max-width:250px;
-        height:160px;
     }
     .card-info{
         width:100%;
