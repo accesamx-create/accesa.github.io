@@ -218,6 +218,19 @@ h1{
 }
 
 /* ========================= */
+/* IMAGEN DEL PRODUCTO */
+/* ========================= */
+
+.product-image {
+    width: 140px; /* Ancho para darle forma rectangular */
+    height: 100px; /* Alto de la imagen */
+    object-fit: cover; /* Evita que la imagen se estire o deforme */
+    border-radius: 12px; /* Esquinas onduladas suaves */
+    flex-shrink: 0; /* Evita que la imagen se haga pequeña si el texto es muy largo */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* Sombra ligera para integrarla mejor */
+}
+
+/* ========================= */
 /* SCROLLBAR */
 /* ========================= */
 
