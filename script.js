@@ -175,7 +175,7 @@ function renderProducts() {
                     <strong>Precio:</strong>
                     $${precio.toLocaleString("es-MX")}
                 </p>
-                <img src="${rutaImagen}" alt="${descripcion}" style="width: 100%; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">
+                <img src="${rutaImagen}" alt="${descripcion}" onerror="this.style.display='none'">
             `;
 
             products.appendChild(card);
