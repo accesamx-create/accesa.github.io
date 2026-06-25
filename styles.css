@@ -169,7 +169,7 @@ h1 {
 /* ========================= */
 
 .product-image {
-    width: 100px; /* Tamaño perfecto para que se vea a la derecha */
+    width: 300px; /* Tamaño perfecto para que se vea a la derecha */
     height: 120px; /* Mantiene la proporción horizontal */
     object-fit: contain; /* Evita que los equipos se recorten */
     background-color: white; /* Fondo blanco */
