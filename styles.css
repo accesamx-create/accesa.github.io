@@ -168,8 +168,8 @@ h1{
 /* ========================= */
 
 .img {
-    width: 50px; /* Controla qué tan ancha es la imagen */
-    height: 30px; /* Controla qué tan alta es */
+    width: 10px; /* Controla qué tan ancha es la imagen */
+    height: 10px; /* Controla qué tan alta es */
     object-fit: contain; /* Asegura que no se recorte nada del equipo */
     background-color: white; /* Fondo blanco para limpiar la imagen */
     border-radius: 12px; /* Esquinas onduladas suaves */
