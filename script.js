@@ -76,26 +76,14 @@ function renderTabs() {
 function obtenerValor(obj, posiblesNombres) {
 
     for (const nombre of posiblesNombres) {
+
         if (obj[nombre] !== undefined) {
             return obj[nombre];
         }
+
     }
 
     return null;
-}
-
-/* =========================
-   🟢 IMAGEN LOCAL
-========================= */
-function obtenerImagen(descripcion) {
-
-    if (!descripcion) return "";
-
-    const nombre = descripcion
-        .trim()
-        .replace(/\s+/g, "");
-
-    return `./Imagenes/${nombre}.jpg`;
 }
 
 function renderProducts() {
@@ -108,33 +96,53 @@ function renderProducts() {
 
         .filter(producto => {
 
-            const descripcion = obtenerValor(producto, [
-                "Descripcion",
-                "Descripción",
-                "DESCRIPCION",
-                "DESCRIPCIÓN"
-            ]);
+            const descripcion = obtenerValor(
+                producto,
+                [
+                    "Descripcion",
+                    "Descripción",
+                    "DESCRIPCION",
+                    "DESCRIPCIÓN"
+                ]
+            );
 
             if (!descripcion) return false;
 
-            return descripcion.toLowerCase().includes(term);
+            return descripcion
+                .toLowerCase()
+                .includes(term);
 
         })
 
         .forEach(producto => {
 
-            const descripcion = obtenerValor(producto, [
-                "Descripcion",
-                "Descripción",
-                "DESCRIPCION",
-                "DESCRIPCIÓN"
-            ]);
+            const descripcion = obtenerValor(
+                producto,
+                [
+                    "Descripcion",
+                    "Descripción",
+                    "DESCRIPCION",
+                    "DESCRIPCIÓN"
+                ]
+            );
 
             const inventario =
-                obtenerValor(producto, ["Inventario", "INVENTARIO"]) || 0;
+                obtenerValor(
+                    producto,
+                    [
+                        "Inventario",
+                        "INVENTARIO"
+                    ]
+                ) || 0;
 
             const precioRaw =
-                obtenerValor(producto, ["Precio", "PRECIO"]) || 0;
+                obtenerValor(
+                    producto,
+                    [
+                        "Precio",
+                        "PRECIO"
+                    ]
+                ) || 0;
 
             const precio = Math.round(
                 Number(
@@ -144,24 +152,11 @@ function renderProducts() {
                 ) || 0
             );
 
-            /* =========================
-               🟢 IMAGEN FINAL
-            ========================= */
-            const imagen = obtenerImagen(descripcion);
-
             const card = document.createElement("div");
 
             card.className = "card";
 
             card.innerHTML = `
-                <img
-                    src="${imagen}"
-                    alt="${descripcion}"
-                    class="product-image"
-                    loading="lazy"
-                    onerror="this.style.display='none'"
-                >
-
                 <h3>${descripcion}</h3>
 
                 <p>
