@@ -147,6 +147,15 @@ function renderProducts() {
                     ]
                 ) || 0;
 
+            const imagen =
+                obtenerValor(
+                    producto,
+                    [
+                        "Imagen",
+                        "IMAGEN"
+                    ]
+                ) || "no-image.png";
+
             const precio = Math.round(
                 Number(
                     String(precioRaw)
@@ -160,6 +169,14 @@ function renderProducts() {
             card.className = "card";
 
             card.innerHTML = `
+
+                <img
+                    src="images/${imagen}"
+                    class="product-image"
+                    alt="${descripcion}"
+                    onerror="this.src='images/no-image.png'"
+                >
+
                 <h3>${descripcion}</h3>
 
                 <p>
@@ -167,10 +184,10 @@ function renderProducts() {
                     ${inventario}
                 </p>
 
-                <p>
-                    <strong>Precio:</strong>
+                <p class="precio">
                     $${precio.toLocaleString("es-MX")}
                 </p>
+
             `;
 
             products.appendChild(card);
