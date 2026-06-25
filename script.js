@@ -163,7 +163,6 @@ function renderProducts() {
             // --- NUEVO: Agregamos la etiqueta <img> ---
             // El atributo onerror oculta la imagen si por alguna razón no se encuentra en la carpeta
             card.innerHTML = `
-                <img src="${rutaImagen}" alt="${descripcion}" style="width: 100%; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">
                 
                 <h3>${descripcion}</h3>
 
@@ -176,6 +175,7 @@ function renderProducts() {
                     <strong>Precio:</strong>
                     $${precio.toLocaleString("es-MX")}
                 </p>
+                <img src="${rutaImagen}" alt="${descripcion}" style="width: 100%; border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'">
             `;
 
             products.appendChild(card);
