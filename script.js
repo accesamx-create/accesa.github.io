@@ -29,6 +29,7 @@ async function cargarDatos() {
     for (const hoja of HOJAS) {
 
         try {
+
             const response = await fetch(
                 `https://opensheet.elk.sh/${SHEET_ID}/${encodeURIComponent(hoja)}`
             );
@@ -36,8 +37,10 @@ async function cargarDatos() {
             data[hoja] = await response.json();
 
         } catch (error) {
+
             console.error(`Error cargando ${hoja}:`, error);
             data[hoja] = [];
+
         }
     }
 
@@ -73,33 +76,14 @@ function renderTabs() {
 function obtenerValor(obj, posiblesNombres) {
 
     for (const nombre of posiblesNombres) {
+
         if (obj[nombre] !== undefined) {
             return obj[nombre];
         }
+
     }
 
     return null;
-}
-
-//
-// 🟢 CONVERTIR NOMBRE A URL LOCAL DE REPO
-//
-function obtenerImagenLocal(descripcion) {
-
-    if (!descripcion) return "";
-
-    // limpiar texto (evita espacios raros)
-    const clean = descripcion
-        .trim()
-        .replace(/\s+/g, ""); // quita espacios
-
-    const base = "Imagenes";
-
-    // probamos extensiones comunes
-    const extensiones = ["jpg", "png", "webp"];
-
-    // retornamos la primera posible (el navegador intentará cargarla)
-    return `${base}/${clean}.${extensiones[0]}`;
 }
 
 function renderProducts() {
@@ -112,36 +96,53 @@ function renderProducts() {
 
         .filter(producto => {
 
-            const descripcion = obtenerValor(producto, [
-                "Descripcion",
-                "Descripción",
-                "DESCRIPCION",
-                "DESCRIPCIÓN"
-            ]);
+            const descripcion = obtenerValor(
+                producto,
+                [
+                    "Descripcion",
+                    "Descripción",
+                    "DESCRIPCION",
+                    "DESCRIPCIÓN"
+                ]
+            );
 
             if (!descripcion) return false;
 
-            return descripcion.toLowerCase().includes(term);
+            return descripcion
+                .toLowerCase()
+                .includes(term);
 
         })
 
         .forEach(producto => {
 
-            const descripcion = obtenerValor(producto, [
-                "Descripcion",
-                "Descripción",
-                "DESCRIPCION",
-                "DESCRIPCIÓN"
-            ]);
+            const descripcion = obtenerValor(
+                producto,
+                [
+                    "Descripcion",
+                    "Descripción",
+                    "DESCRIPCION",
+                    "DESCRIPCIÓN"
+                ]
+            );
 
             const inventario =
-                obtenerValor(producto, ["Inventario", "INVENTARIO"]) || 0;
+                obtenerValor(
+                    producto,
+                    [
+                        "Inventario",
+                        "INVENTARIO"
+                    ]
+                ) || 0;
 
             const precioRaw =
-                obtenerValor(producto, ["Precio", "PRECIO"]) || 0;
-
-            // 🟢 IMAGEN LOCAL EN REPO
-            const imagen = obtenerImagenLocal(descripcion);
+                obtenerValor(
+                    producto,
+                    [
+                        "Precio",
+                        "PRECIO"
+                    ]
+                ) || 0;
 
             const precio = Math.round(
                 Number(
@@ -158,30 +159,15 @@ function renderProducts() {
             card.innerHTML = `
                 <h3>${descripcion}</h3>
 
-                <div class="card-content">
+                <p>
+                    <strong>Inventario:</strong>
+                    ${inventario}
+                </p>
 
-                    <div class="card-info">
-
-                        <p>
-                            <strong>Inventario:</strong>
-                            ${inventario}
-                        </p>
-
-                        <p class="precio">
-                            $${precio.toLocaleString("es-MX")}
-                        </p>
-
-                    </div>
-
-                    <img
-                        src="${imagen}"
-                        class="product-image"
-                        alt="${descripcion}"
-                        loading="lazy"
-                        onerror="this.style.display='none'"
-                    >
-
-                </div>
+                <p>
+                    <strong>Precio:</strong>
+                    $${precio.toLocaleString("es-MX")}
+                </p>
             `;
 
             products.appendChild(card);
@@ -189,11 +175,13 @@ function renderProducts() {
         });
 
     if (products.innerHTML === "") {
+
         products.innerHTML = `
             <div class="card">
                 <h3>No se encontraron productos</h3>
             </div>
         `;
+
     }
 }
 
