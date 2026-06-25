@@ -169,8 +169,8 @@ h1 {
 /* ========================= */
 
 .product-image {
-    width: 40px; /* Tamaño perfecto para que se vea a la derecha */
-    height: 90px; /* Mantiene la proporción horizontal */
+    width: 100px; /* Tamaño perfecto para que se vea a la derecha */
+    height: 120px; /* Mantiene la proporción horizontal */
     object-fit: contain; /* Evita que los equipos se recorten */
     background-color: white; /* Fondo blanco */
     border-radius: 8px; /* Esquinas onduladas suaves */
