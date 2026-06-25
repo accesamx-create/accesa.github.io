@@ -81,26 +81,25 @@ function obtenerValor(obj, posiblesNombres) {
     return null;
 }
 
-/* =========================
-   🔥 CONVERTIDOR DRIVE
-========================= */
-function convertirDrive(url) {
+//
+// 🟢 CONVERTIR NOMBRE A URL LOCAL DE REPO
+//
+function obtenerImagenLocal(descripcion) {
 
-    if (!url) return "";
+    if (!descripcion) return "";
 
-    // Caso 1: formato /file/d/ID/view
-    let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    // limpiar texto (evita espacios raros)
+    const clean = descripcion
+        .trim()
+        .replace(/\s+/g, ""); // quita espacios
 
-    if (match && match[1]) {
-        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-    }
+    const base = "Imagenes";
 
-    // Caso 2: ya es uc?export=view
-    if (url.includes("uc?export=view")) {
-        return url;
-    }
+    // probamos extensiones comunes
+    const extensiones = ["jpg", "png", "webp"];
 
-    return url; // fallback
+    // retornamos la primera posible (el navegador intentará cargarla)
+    return `${base}/${clean}.${extensiones[0]}`;
 }
 
 function renderProducts() {
@@ -141,13 +140,8 @@ function renderProducts() {
             const precioRaw =
                 obtenerValor(producto, ["Precio", "PRECIO"]) || 0;
 
-            /* =========================
-               🔥 IMAGEN (DRIVE FIX)
-            ========================= */
-            const imagenRaw =
-                obtenerValor(producto, ["Imagen", "IMAGEN"]) || "";
-
-            const imagen = convertirDrive(imagenRaw);
+            // 🟢 IMAGEN LOCAL EN REPO
+            const imagen = obtenerImagenLocal(descripcion);
 
             const precio = Math.round(
                 Number(
