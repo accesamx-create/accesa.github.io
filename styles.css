@@ -164,6 +164,21 @@ h1{
 }
 
 /* ========================= */
+/* IMAGEN DEL PRODUCTO */
+/* ========================= */
+
+.product-image {
+    width: 130px; /* Controla qué tan ancha es la imagen */
+    height: 90px; /* Controla qué tan alta es */
+    object-fit: contain; /* Asegura que no se recorte nada del equipo */
+    background-color: white; /* Fondo blanco para limpiar la imagen */
+    border-radius: 12px; /* Esquinas onduladas suaves */
+    padding: 5px; /* Un respiro entre la imagen y el borde */
+    flex-shrink: 0; /* Evita que la imagen se aplaste si el texto es largo */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* ========================= */
 /* TEXTO GENERAL */
 /* ========================= */
 
@@ -215,19 +230,6 @@ h1{
     font-weight:bold;
     width:100%;
     padding:30px 0;
-}
-
-/* ========================= */
-/* IMAGEN DEL PRODUCTO */
-/* ========================= */
-
-.product-image {
-    width: 140px; /* Ancho para darle forma rectangular */
-    height: 100px; /* Alto de la imagen */
-    object-fit: cover; /* Evita que la imagen se estire o deforme */
-    border-radius: 12px; /* Esquinas onduladas suaves */
-    flex-shrink: 0; /* Evita que la imagen se haga pequeña si el texto es muy largo */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* Sombra ligera para integrarla mejor */
 }
 
 /* ========================= */
