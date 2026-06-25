@@ -167,29 +167,35 @@ function renderProducts() {
             const card = document.createElement("div");
 
             card.className = "card";
-
             card.innerHTML = `
-
-                <img
-                    src="images/${imagen}"
-                    class="product-image"
-                    alt="${descripcion}"
-                    onerror="this.src='images/no-image.png'"
-                >
-
+            
                 <h3>${descripcion}</h3>
-
-                <p>
-                    <strong>Inventario:</strong>
-                    ${inventario}
-                </p>
-
-                <p class="precio">
-                    $${precio.toLocaleString("es-MX")}
-                </p>
-
+                
+                <div class="card-content">
+                
+                    <div class="card-info">
+    
+                        <p>
+                            <strong>Inventario:</strong>
+                            ${inventario}
+                        </p>
+    
+                        <p class="precio">
+                            $${precio.toLocaleString("es-MX")}
+                        </p>
+    
+                    </div>
+    
+                    <img
+                        src="images/${imagen}"
+                        class="product-image"
+                        alt="${descripcion}"
+                        onerror="this.src='images/no-image.png'"
+                    >
+    
+                </div>
+    
             `;
-
             products.appendChild(card);
 
         });
