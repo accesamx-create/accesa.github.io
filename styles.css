@@ -169,14 +169,15 @@ h1 {
 /* ========================= */
 
 .product-image {
-    width: 300px; /* Tamaño perfecto para que se vea a la derecha */
-    height: 120px; /* Mantiene la proporción horizontal */
-    object-fit: contain; /* Evita que los equipos se recorten */
-    background-color: white; /* Fondo blanco */
-    border-radius: 8px; /* Esquinas onduladas suaves */
-    padding: 5px; /* Respiro interno */
-    flex-shrink: 0; /* Evita que el texto aplaste la imagen */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Sombra ligera */
+    width: 240px;
+    height: 160px;
+    object-fit: cover;
+    object-position: center;
+    background-color: white;
+    border-radius: 8px;
+    padding: 5px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 /* ========================= */
