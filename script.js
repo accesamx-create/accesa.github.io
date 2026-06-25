@@ -154,7 +154,7 @@ function renderProducts() {
                         "Imagen",
                         "IMAGEN"
                     ]
-                ) || "no-image.png";
+                ) || "";
 
             const precio = Math.round(
                 Number(
@@ -190,7 +190,8 @@ function renderProducts() {
                         src="${imagen}"
                         class="product-image"
                         alt="${descripcion}"
-                        onerror="this.src='images/no-image.png'"
+                        loading="lazy"
+                        onerror="this.style.display='none'"
                     >
     
                 </div>
