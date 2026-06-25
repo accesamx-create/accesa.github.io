@@ -167,7 +167,7 @@ h1{
 /* IMAGEN DEL PRODUCTO */
 /* ========================= */
 
-.product-image {
+.img {
     width: 50px; /* Controla qué tan ancha es la imagen */
     height: 30px; /* Controla qué tan alta es */
     object-fit: contain; /* Asegura que no se recorte nada del equipo */
