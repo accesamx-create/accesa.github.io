@@ -174,6 +174,7 @@ function renderProducts() {
                         </p>
 
                         <p class="precio">
+                            <strong>Precio:</strong>
                             $${precio.toLocaleString("es-MX")}
                         </p>
                     </div>
