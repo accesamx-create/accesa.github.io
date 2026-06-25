@@ -163,21 +163,25 @@ function renderProducts() {
             // --- NUEVO: Agregamos la etiqueta <img> ---
             // El atributo onerror oculta la imagen si por alguna razón no se encuentra en la carpeta
             card.innerHTML = `
-                
                 <h3>${descripcion}</h3>
 
-                <p>
-                    <strong>Inventario:</strong>
-                    ${inventario}
-                </p>
+                <div class="card-content">
+                    
+                    <div class="card-info">
+                        <p>
+                            <strong>Inventario:</strong>
+                            ${inventario}
+                        </p>
 
-                <p>
-                    <strong>Precio:</strong>
-                    $${precio.toLocaleString("es-MX")}
-                </p>
-                <img src="${rutaImagen}" alt="${descripcion}" class="product-image" onerror="this.style.display='none'">
+                        <p class="precio">
+                            $${precio.toLocaleString("es-MX")}
+                        </p>
+                    </div>
+                    
+                    <img src="${rutaImagen}" alt="${descripcion}" class="product-image" onerror="this.style.display='none'">
+                    
+                </div>
             `;
-
             products.appendChild(card);
 
         });
