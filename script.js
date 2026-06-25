@@ -187,7 +187,7 @@ function renderProducts() {
                     </div>
     
                     <img
-                        src="images/${imagen}"
+                        src="${imagen}"
                         class="product-image"
                         alt="${descripcion}"
                         onerror="this.src='images/no-image.png'"
