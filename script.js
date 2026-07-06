@@ -12,7 +12,8 @@ const HOJAS = [
     "Resortes",
     "Comunello",
     "Electronica",
-    "Extras"
+    "Control de Acceso",
+    "Refacciones"
 ];
 
 let data = {};
