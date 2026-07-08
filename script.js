@@ -11,7 +11,8 @@ const HOJAS = [
     "Controles",
     "Resortes",
     "Comunello",
-    "Electronica",
+    "Centrales y tarjetas electronicas",
+    "Dispositivos y accesorios electronicos",
     "Control de Acceso",
     "Refacciones"
 ];
