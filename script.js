@@ -10,7 +10,7 @@ const HOJAS = [
     "Azteca",
     "Controles",
     "Resortes",
-    "Comunello",
+    "Herrajes",
     "Centrales y tarjetas electronicas",
     "Dispositivos y accesorios electronicos",
     "Control de Acceso",
