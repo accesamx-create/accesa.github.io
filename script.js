@@ -181,7 +181,7 @@ function renderProducts() {
                         </p>
                     </div>
                     
-                    <img src="${rutaImagen}" alt="${descripcion}" class="product-image" onerror="this.style.display='none'">
+                    <img src="${rutaImagen}" alt="${descripcion}" class="product-image" loading="lazy" onerror="this.style.display='none'">
                     
                 </div>
             `;
