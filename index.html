@@ -1,59 +1,158 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inventario ACCESA Cancún</title>
-<link rel="icon" href="LOGO ACCESA.png">
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Inventario ACCESA Cancún. Consulta disponibilidad de productos y solicita cotizaciones."
+    >
+
+    <title>Inventario ACCESA Cancún</title>
+
+    <link
+        rel="icon"
+        href="LOGO ACCESA.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="styles.css"
+    >
 </head>
+
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <div class="header">
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
 
-        <img src="LOGO ACCESA.png" alt="ACCESA" class="logo">
+        <header class="header">
 
-        <h1>Inventario Cancún</h1>
+            <img
+                src="LOGO ACCESA.png"
+                alt="ACCESA"
+                class="logo"
+                loading="eager"
+            >
 
-        <p class="subtitle">
-            Inventario actualizado en tiempo real
-        </p>
+            <h1>
+                Inventario Cancún
+            </h1>
 
-        <p class="contacto">
-            📞 Para cualquier duda o cotización:
-            <strong>998 103 6959</strong>
-        </p>
-        
-        <p class="subtitle">
-            <strong>Si requiere algun producto que no hay stock favor de ponerse en contacto con nosotros</strong>
-        </p>
+            <p class="subtitle">
+                Inventario actualizado en tiempo real
+            </p>
 
-        <p class="contacto">
-            <strong>¡Descubre nuestra tienda en línea y encuentra todo lo que buscas en productos Syscom!</strong>
-        </p>
 
-        <p>
-            <a href="https://www.productos-info.com/tienda/accesa-puertas-automaticas" class="btn">Ir a la tienda</a>
-        </p>
-        
+            <!-- CONTACTO -->
+
+            <p class="contacto">
+                📞 Para cualquier duda o cotización:
+                <strong>998 103 6959</strong>
+            </p>
+
+
+            <!-- AVISO DE INVENTARIO -->
+
+            <p class="subtitle">
+                <strong>
+                    Si requiere algun producto que no hay stock favor
+                    de ponerse en contacto con nosotros
+                </strong>
+            </p>
+
+
+            <!-- TIENDA ONLINE -->
+
+            <p class="contacto">
+                <strong>
+                    ¡Descubre nuestra tienda en línea y encuentra todo
+                    lo que buscas en productos Syscom!
+                </strong>
+            </p>
+
+            <p>
+                <a
+                    href="https://www.productos-info.com/tienda/accesa-puertas-automaticas"
+                    class="btn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Ir a la tienda
+                </a>
+            </p>
+
+        </header>
+
+
+        <!-- =====================================================
+             CONTENIDO PRINCIPAL
+             ===================================================== -->
+
+        <main>
+
+            <!-- =================================================
+                 BUSCADOR
+                 ================================================= -->
+
+            <section
+                class="search-section"
+                aria-label="Buscar productos"
+            >
+
+                <input
+                    type="search"
+                    id="search"
+                    placeholder="🔍 Buscar producto..."
+                    aria-label="Buscar producto"
+                    autocomplete="off"
+                >
+
+            </section>
+
+
+            <!-- =================================================
+                 CATEGORÍAS
+                 ================================================= -->
+
+            <section
+                id="tabs"
+                aria-label="Categorías de productos"
+            >
+            </section>
+
+
+            <!-- =================================================
+                 PRODUCTOS
+                 ================================================= -->
+
+            <section
+                id="products"
+                aria-label="Productos disponibles"
+            >
+            </section>
+
+        </main>
+
     </div>
 
-    <input
-        type="text"
-        id="search"
-        placeholder="🔍 Buscar producto..."
-    >
 
-    <div id="tabs"></div>
+    <!-- =========================================================
+         JAVASCRIPT
+         ========================================================= -->
 
-    <div id="products"></div>
-
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 
 </body>
+
 </html>
