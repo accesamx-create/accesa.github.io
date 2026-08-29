@@ -17,137 +17,73 @@ const HOJAS = [
     "Refacciones"
 ];
 
-// Tiempo de vida del cache en localStorage (en minutos)
-const CACHE_MINUTOS = 1;
+// ================================
+// CONFIGURACIÓN
+// ================================
+
+const CONFIG = {
+    cacheMinutos: 5,
+    debounceBusqueda: 250,
+    carpetaImagenes: "Imagenes",
+    extensionesImagen: ["png", "jpg", "jpeg", "webp"]
+};
+
+// ================================
+// ESTADO
+// ================================
 
 let data = {};
+let cargando = {};
 let currentSheet = HOJAS[0];
 
 const tabs = document.getElementById("tabs");
 const products = document.getElementById("products");
 const search = document.getElementById("search");
 
-/**
- * Obtiene los datos de una hoja, usando cache en localStorage si sigue vigente.
- * Si no hay cache o está vencido, hace fetch a la API y actualiza el cache.
- */
-async function fetchConCache(hoja) {
-
-    const key = `sheet_${hoja}`;
-
-    try {
-
-        const cacheRaw = localStorage.getItem(key);
-
-        if (cacheRaw) {
-
-            const cache = JSON.parse(cacheRaw);
-            const vigente = (Date.now() - cache.timestamp) < CACHE_MINUTOS * 60 * 1000;
-
-            if (vigente) {
-                return cache.data;
-            }
-
-        }
-
-    } catch (error) {
-        console.warn(`No se pudo leer cache de ${hoja}:`, error);
-    }
-
-    const response = await fetch(
-        `https://opensheet.elk.sh/${SHEET_ID}/${encodeURIComponent(hoja)}`
-    );
-
-    const json = await response.json();
-
-    try {
-
-        localStorage.setItem(
-            key,
-            JSON.stringify({ data: json, timestamp: Date.now() })
-        );
-
-    } catch (error) {
-        // Si localStorage está lleno o no disponible, seguimos sin cache
-        console.warn(`No se pudo guardar cache de ${hoja}:`, error);
-    }
-
-    return json;
-}
+// ================================
+// UTILIDADES
+// ================================
 
 /**
- * Carga los datos de una hoja específica (si no están ya en memoria).
+ * Normaliza texto:
+ * - convierte a minúsculas
+ * - elimina acentos
+ * - elimina espacios innecesarios
  */
-async function cargarHoja(hoja) {
+function normalizarTexto(valor) {
 
-    if (data[hoja]) return; // ya está en memoria, no hace falta pedirla de nuevo
-
-    try {
-        data[hoja] = await fetchConCache(hoja);
-    } catch (error) {
-        console.error(`Error cargando ${hoja}:`, error);
-        data[hoja] = [];
+    if (valor === null || valor === undefined) {
+        return "";
     }
+
+    return String(valor)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
 
 }
 
 /**
- * Carga inicial: solo trae la hoja activa para que la página se sienta
- * instantánea. El resto se carga bajo demanda al cambiar de pestaña.
+ * Busca una propiedad sin importar:
+ * - mayúsculas
+ * - minúsculas
+ * - acentos
  */
-async function cargarDatosIniciales() {
-
-    products.innerHTML = "<p style='color:white;'>Cargando productos...</p>";
-
-    renderTabs();
-
-    await cargarHoja(currentSheet);
-
-    renderProducts();
-
-}
-
-function renderTabs() {
-
-    tabs.innerHTML = "";
-
-    HOJAS.forEach(sheet => {
-
-        const btn = document.createElement("div");
-
-        btn.className =
-            "tab" +
-            (sheet === currentSheet ? " active" : "");
-
-        btn.textContent = sheet;
-
-        btn.onclick = async () => {
-
-            currentSheet = sheet;
-            renderTabs();
-
-            const yaEstabaCargada = !!data[sheet];
-
-            if (!yaEstabaCargada) {
-                products.innerHTML = "<p style='color:white;'>Cargando productos...</p>";
-            }
-
-            await cargarHoja(sheet);
-            renderProducts();
-
-        };
-
-        tabs.appendChild(btn);
-
-    });
-}
-
 function obtenerValor(obj, posiblesNombres) {
+
+    const claves = Object.keys(obj);
 
     for (const nombre of posiblesNombres) {
 
-        if (obj[nombre] !== undefined) {
-            return obj[nombre];
+        const nombreNormalizado = normalizarTexto(nombre);
+
+        const claveEncontrada = claves.find(
+            clave => normalizarTexto(clave) === nombreNormalizado
+        );
+
+        if (claveEncontrada !== undefined) {
+            return obj[claveEncontrada];
         }
 
     }
@@ -155,130 +91,481 @@ function obtenerValor(obj, posiblesNombres) {
     return null;
 }
 
+/**
+ * Convierte el precio a número.
+ */
+function convertirPrecio(valor) {
+
+    if (valor === null || valor === undefined || valor === "") {
+        return 0;
+    }
+
+    let texto = String(valor)
+        .replace(/\$/g, "")
+        .replace(/,/g, "")
+        .trim();
+
+    const numero = Number(texto);
+
+    return Number.isFinite(numero)
+        ? Math.round(numero)
+        : 0;
+
+}
+
+/**
+ * Escapa HTML para evitar problemas si los datos
+ * de Google Sheets contienen caracteres especiales.
+ */
+function escaparHTML(valor) {
+
+    return String(valor ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+// ================================
+// CACHE
+// ================================
+
+function obtenerCache(hoja) {
+
+    const key = `sheet_${hoja}`;
+
+    try {
+
+        const cacheRaw = localStorage.getItem(key);
+
+        if (!cacheRaw) {
+            return null;
+        }
+
+        const cache = JSON.parse(cacheRaw);
+
+        const tiempoCache =
+            Date.now() - cache.timestamp;
+
+        const cacheValido =
+            tiempoCache <
+            CONFIG.cacheMinutos * 60 * 1000;
+
+        if (!cacheValido) {
+
+            localStorage.removeItem(key);
+
+            return null;
+
+        }
+
+        return cache.data;
+
+    } catch (error) {
+
+        console.warn(
+            `Error leyendo cache de ${hoja}:`,
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+function guardarCache(hoja, datos) {
+
+    const key = `sheet_${hoja}`;
+
+    try {
+
+        localStorage.setItem(
+            key,
+            JSON.stringify({
+                data: datos,
+                timestamp: Date.now()
+            })
+        );
+
+    } catch (error) {
+
+        console.warn(
+            `No se pudo guardar cache de ${hoja}:`,
+            error
+        );
+
+    }
+
+}
+
+// ================================
+// FETCH GOOGLE SHEETS
+// ================================
+
+async function fetchHoja(hoja) {
+
+    const cache = obtenerCache(hoja);
+
+    if (cache) {
+        return cache;
+    }
+
+    const url =
+        `https://opensheet.elk.sh/${SHEET_ID}/${encodeURIComponent(hoja)}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error(
+            `Error HTTP ${response.status}`
+        );
+    }
+
+    const json = await response.json();
+
+    if (!Array.isArray(json)) {
+        throw new Error(
+            "La respuesta de Google Sheets no es válida."
+        );
+    }
+
+    guardarCache(hoja, json);
+
+    return json;
+
+}
+
+// ================================
+// CARGAR HOJA
+// ================================
+
+async function cargarHoja(hoja) {
+
+    // Ya está cargada
+    if (data[hoja]) {
+        return data[hoja];
+    }
+
+    // Ya se está cargando
+    if (cargando[hoja]) {
+        return cargando[hoja];
+    }
+
+    cargando[hoja] = fetchHoja(hoja)
+        .then(datos => {
+
+            data[hoja] = datos;
+
+            return datos;
+
+        })
+        .catch(error => {
+
+            console.error(
+                `Error cargando ${hoja}:`,
+                error
+            );
+
+            data[hoja] = [];
+
+            return [];
+
+        })
+        .finally(() => {
+
+            delete cargando[hoja];
+
+        });
+
+    return cargando[hoja];
+
+}
+
+// ================================
+// TABS
+// ================================
+
+function renderTabs() {
+
+    tabs.innerHTML = "";
+
+    const fragment =
+        document.createDocumentFragment();
+
+    HOJAS.forEach(hoja => {
+
+        const btn =
+            document.createElement("button");
+
+        btn.className =
+            `tab ${hoja === currentSheet ? "active" : ""}`;
+
+        btn.textContent = hoja;
+
+        btn.type = "button";
+
+        btn.addEventListener("click", async () => {
+
+            if (currentSheet === hoja) {
+                return;
+            }
+
+            currentSheet = hoja;
+
+            renderTabs();
+
+            if (!data[hoja]) {
+
+                mostrarCarga();
+
+            }
+
+            await cargarHoja(hoja);
+
+            renderProducts();
+
+        });
+
+        fragment.appendChild(btn);
+
+    });
+
+    tabs.appendChild(fragment);
+
+}
+
+// ================================
+// LOADING
+// ================================
+
+function mostrarCarga() {
+
+    products.innerHTML = `
+        <div class="loading">
+            <span class="loader"></span>
+            <p>Cargando productos...</p>
+        </div>
+    `;
+
+}
+
+// ================================
+// PRODUCTOS
+// ================================
+
+function prepararProducto(producto) {
+
+    const descripcion =
+        obtenerValor(producto, [
+            "Descripcion",
+            "Descripción"
+        ]);
+
+    if (!descripcion) {
+        return null;
+    }
+
+    const inventario =
+        obtenerValor(producto, [
+            "Inventario"
+        ]) || 0;
+
+    const precioRaw =
+        obtenerValor(producto, [
+            "Precio"
+        ]) || 0;
+
+    return {
+
+        descripcion: String(descripcion).trim(),
+
+        descripcionBusqueda:
+            normalizarTexto(descripcion),
+
+        inventario,
+
+        precio:
+            convertirPrecio(precioRaw)
+
+    };
+
+}
+
+// ================================
+// RENDER PRODUCTS
+// ================================
+
 function renderProducts() {
 
-    const term = search.value.toLowerCase();
+    const productos =
+        data[currentSheet] || [];
 
-    const filtrados = (data[currentSheet] || []).filter(producto => {
+    const termino =
+        normalizarTexto(search.value);
 
-        const descripcion = obtenerValor(
-            producto,
-            [
-                "Descripcion",
-                "Descripción",
-                "DESCRIPCION",
-                "DESCRIPCIÓN"
-            ]
-        );
+    const filtrados =
+        productos
 
-        if (!descripcion) return false;
+            .map(prepararProducto)
 
-        return descripcion
-            .toLowerCase()
-            .includes(term);
+            .filter(Boolean)
 
-    });
+            .filter(producto => {
 
-    // Armamos todas las tarjetas en memoria (DocumentFragment) y las
-    // insertamos al DOM de una sola vez, evitando reflows repetidos.
-    const fragment = document.createDocumentFragment();
+                if (!termino) {
+                    return true;
+                }
 
-    filtrados.forEach(producto => {
+                return producto.descripcionBusqueda
+                    .includes(termino);
 
-        const descripcion = obtenerValor(
-            producto,
-            [
-                "Descripcion",
-                "Descripción",
-                "DESCRIPCION",
-                "DESCRIPCIÓN"
-            ]
-        );
-
-        const inventario =
-            obtenerValor(
-                producto,
-                [
-                    "Inventario",
-                    "INVENTARIO"
-                ]
-            ) || 0;
-
-        const precioRaw =
-            obtenerValor(
-                producto,
-                [
-                    "Precio",
-                    "PRECIO"
-                ]
-            ) || 0;
-
-        const precio = Math.round(
-            Number(
-                String(precioRaw)
-                    .replace(/\$/g, "")
-                    .replace(/,/g, "")
-            ) || 0
-        );
-
-        const rutaImagen = `Imagenes/${encodeURIComponent(descripcion)}.png`;
-
-        const card = document.createElement("div");
-
-        card.className = "card";
-
-        card.innerHTML = `
-            <h3>${descripcion}</h3>
-
-            <div class="card-content">
-
-                <div class="card-info">
-                    <p>
-                        <strong>Inventario:</strong>
-                        ${inventario}
-                    </p>
-
-                    <p class="precio">
-                        <strong>Precio:</strong>
-                        $${precio.toLocaleString("es-MX")}
-                    </p>
-                </div>
-
-                <img src="${rutaImagen}" alt="${descripcion}" class="product-image" loading="lazy" decoding="async" onerror="this.style.display='none'">
-
-            </div>
-        `;
-
-        fragment.appendChild(card);
-
-    });
+            });
 
     products.innerHTML = "";
 
     if (filtrados.length === 0) {
 
         products.innerHTML = `
-            <div class="card">
+            <div class="card empty">
                 <h3>No se encontraron productos</h3>
+                <p>Intenta con otro término de búsqueda.</p>
             </div>
         `;
 
-    } else {
-
-        products.appendChild(fragment);
+        return;
 
     }
+
+    const fragment =
+        document.createDocumentFragment();
+
+    filtrados.forEach(producto => {
+
+        const card =
+            document.createElement("article");
+
+        card.className = "card";
+
+        const titulo =
+            document.createElement("h3");
+
+        titulo.textContent =
+            producto.descripcion;
+
+        const content =
+            document.createElement("div");
+
+        content.className =
+            "card-content";
+
+        const info =
+            document.createElement("div");
+
+        info.className =
+            "card-info";
+
+        info.innerHTML = `
+            <p>
+                <strong>Inventario:</strong>
+                ${escaparHTML(producto.inventario)}
+            </p>
+
+            <p class="precio">
+                <strong>Precio:</strong>
+                $${producto.precio.toLocaleString("es-MX")}
+            </p>
+        `;
+
+        const imagen =
+            document.createElement("img");
+
+        imagen.className =
+            "product-image";
+
+        imagen.alt =
+            producto.descripcion;
+
+        imagen.loading = "lazy";
+
+        imagen.decoding = "async";
+
+        const nombreImagen =
+            encodeURIComponent(
+                producto.descripcion
+            );
+
+        imagen.src =
+            `${CONFIG.carpetaImagenes}/${nombreImagen}.png`;
+
+        imagen.onerror = () => {
+
+            imagen.style.display = "none";
+
+        };
+
+        content.appendChild(info);
+        content.appendChild(imagen);
+
+        card.appendChild(titulo);
+        card.appendChild(content);
+
+        fragment.appendChild(card);
+
+    });
+
+    products.appendChild(fragment);
+
 }
 
-// Debounce en la búsqueda: espera 200ms después de que el usuario deja
-// de escribir antes de volver a renderizar, para no recalcular en cada tecla.
-let debounceTimer;
+// ================================
+// BÚSQUEDA
+// ================================
+
+let debounceTimer = null;
 
 search.addEventListener("input", () => {
 
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(renderProducts, 200);
+
+    debounceTimer = setTimeout(() => {
+
+        renderProducts();
+
+    }, CONFIG.debounceBusqueda);
 
 });
 
-cargarDatosIniciales();
+// ================================
+// INICIALIZACIÓN
+// ================================
+
+async function iniciar() {
+
+    mostrarCarga();
+
+    renderTabs();
+
+    await cargarHoja(currentSheet);
+
+    renderProducts();
+
+    // Precargar las demás hojas después de mostrar
+    // la primera para que los siguientes clicks sean rápidos.
+    setTimeout(() => {
+
+        HOJAS
+            .filter(hoja => hoja !== currentSheet)
+            .forEach(hoja => {
+
+                cargarHoja(hoja);
+
+            });
+
+    }, 1000);
+
+}
+
+iniciar();
