@@ -22,7 +22,7 @@ const HOJAS = [
 // ================================
 
 const CONFIG = {
-    cacheMinutos: 5,
+    cacheMinutos: 1,
     debounceBusqueda: 250,
     carpetaImagenes: "Imagenes",
     extensionesImagen: ["png", "jpg", "jpeg", "webp"]
